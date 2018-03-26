@@ -38,12 +38,12 @@ void loop() {
     digitalWrite(AF,HIGH);
     digitalWrite(BF,LOW);
     digitalWrite(AB,LOW);
-    digitalWrite(BB,LOW);
+    digitalWrite(BB,HIGH);
           break;
           case'L':// go left
     digitalWrite(AF,LOW);
     digitalWrite(BF,HIGH);
-    digitalWrite(AB,LOW);
+    digitalWrite(AB,HIGH);
     digitalWrite(BB,LOW);
           break;
          default:
