@@ -8,10 +8,10 @@ int BB=6;//in4
 void setup() {
   // put your setup code here, to run once:
   bluetooth.begin(9600);
-  PinMode(AF,output);
-  PinMode(AB,output);
-  PinMode(BF,output);
-  PinMode(BB,output);
+  pinMode(AF,OUTPUT);
+  pinMode(AB,OUTPUT);
+  pinMode(BF,OUTPUT);
+  pinMode(BB,OUTPUT);
   
 
 }
@@ -46,6 +46,13 @@ void loop() {
     digitalWrite(AB,LOW);
     digitalWrite(BB,LOW);
           break;
+         default:
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);      
+         
+         
     
    
    }
