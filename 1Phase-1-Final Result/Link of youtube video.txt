@@ -22,10 +22,10 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(trigPin, LOW);
+   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
-  delayMicroseconds(5);
+  delayMicroseconds(10);
   digitalWrite(trigPin, LOW);   // Take reading on echo pin
   float  duration = pulseIn(echoPin, HIGH);
 
@@ -34,8 +34,15 @@ void loop() {
   
   
   // put your main code here, to run repeatedly:
-    if ( cm > 5 )
-    {
+ if (cm <= 5 ) {
+    digitalWrite(AF,HIGH);
+    digitalWrite(BF,HIGH);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    digitalWrite(13,HIGH);
+    }
+   
+   else if (cm > 5){
     if(bluetooth.available())
   {  
     data=bluetooth.read();
@@ -68,16 +75,10 @@ void loop() {
     digitalWrite(AF,LOW);
     digitalWrite(BF,LOW);
     digitalWrite(AB,LOW);
-    digitalWrite(BB,LOW);
-    }
+    digitalWrite(BB,LOW);      
          
          
     }
   }
-  else {
-    digitalWrite(AF,HIGH);
-    digitalWrite(BF,HIGH);
-    digitalWrite(AB,LOW);
-    digitalWrite(BB,LOW);
-  }
+   }
   }
