@@ -1,0 +1,10 @@
+With so many models available on the market from various vendors would be very useful to know from where you can start. A good starting point is to know certain features, and some of them are given below:
+veral kinds of sensor technologies including here ultrasonic sensors, capacitive, photoelectric, 
+Type of Sensor – the presence of an object can be detected with proximity sensors, and there are 
+nductive, or magnetic. Tracking objects can works using proximity sensors (ex. : ultrasonic sensors), or for advanced applications generally it is used image sensors (ex.: webcams) and vision software like 
+Resolution – a high resolution can detect smallest changes in the position of the target;
+ontrol Interface – to interface the sensor you have to know the types of the sensors. A wide range of sensors are 3-wire DC types, but there are many more types including 2-wire DC or 2-wire AC/DC;
+Range – involves choosing the sensors based on measurement limits and compared with the desired detection range of the robot;
+Environmental Condition – any sensor has its operational limits usually these are the temperature and humidity;
+Cost – depending on the budget allocated to a project, you can select the sensor or the sensors that can be used to build the robot;
+Accuracy – the accuracy is very important in detecting and tracking objects, and it is useful to choose sensors with accuracy values between desired measurement margins;
