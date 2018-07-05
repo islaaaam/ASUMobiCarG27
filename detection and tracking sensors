@@ -1,0 +1,9 @@
+he ultimate goal when a robot is built is to be optimized and to be compliant with all specifications
+meet the requirements sometimes you can spend many hours just to sort and identify the sensors that 
+would be the best for an application like detecting and tracking an object. In this article, we explore all sensor types that can be used for target detection and tracking as well as features and the types of 
+Selecting the right sensor is not a strict process. This is about eliminating all the wrong choices based on a series of question aiming to eliminate first the technology that underlying the sensor and then the product that it doesn’t fit to the robot requirements.
+When we use the word target, we refer in the same time at a small ball, at an object like a chair, or even at a human that stay in front of the robot.
+To select the best sensor from a variety of products and manufacturers is a hard work especially when you’re a beginner and try to build a simple robot. In few words the sensor has to be selected in concordance with your 
+shape and range. All of these three features have to be on the same line with the specification of the robot. But even so, it is hard to define the best sensor since the performance and precision of this depend on many factors.
+Type of Sensor 
+e presence of an object can be detected with proximity sensors, and there are several kinds of sensor technologies including here ultrasonic sensors, capacitive, photoelectric, inductive, or magnetic. Tracking objects can works using proximity sensors (ex. : ultrasonic sensors), or for advanced applications generally it is used image sensors (ex.: webcams) and vision software like OpenCV;
