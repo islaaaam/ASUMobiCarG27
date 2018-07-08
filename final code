@@ -1,0 +1,626 @@
+#include <SoftwareSerial.h>  // final code
+SoftwareSerial bluetooth (12,13);//Rx,Tx (ARDUINO)
+char data ;
+int AF=3;//in1 
+int AB=4;//in2
+int BF=5;//in3  =>of the motor driver
+int BB=6;//in4
+int state = LOW;
+int lastState;
+float counter = 0;
+float sens = 75;
+int slots = 10;
+float dist=0;
+float dest;
+String str;
+float curve;
+int s = 170;
+int sb = 200;
+int turn=200; // rad speed (sqr)
+float pitch =65; // angle  (sqr)
+int smax=90; //(sqr)
+int smin=70; //(sqr)
+int white=A5;
+int Red=2;
+int sp = 120;
+
+void setup() {
+  // put your setup code here, to run once:
+
+
+ Serial.begin(9600);
+ bluetooth.begin(9600);
+ pinMode(AF,OUTPUT);
+  pinMode(AB,OUTPUT);
+  pinMode(BF,OUTPUT);
+  pinMode(BB,OUTPUT);
+  pinMode(10,OUTPUT);
+  pinMode(11,OUTPUT);
+  pinMode(white,OUTPUT);
+  pinMode(Red,OUTPUT);
+  pinMode(15,INPUT); //s1 L
+  pinMode(16,INPUT); //s2 M
+  pinMode(17,INPUT);//s3   R
+}
+void(* resetFunc) (void) = 0; //declare reset function @ address 0
+void loop() {                    // put your main code here, to run repeatedly:
+
+  if(bluetooth.available()>0)
+ {data=bluetooth.read();
+     if (data =='c')
+    {
+      while (1)
+ { analogWrite(10,210);
+   analogWrite(11,200);
+       if(bluetooth.available()>0)
+     {    data=bluetooth.read();}   
+     if (data == 'q')
+  { digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW); 
+      resetFunc();
+     }
+      
+     
+    
+    switch(data){
+    case'B'://go back
+    digitalWrite(AF,HIGH);
+    digitalWrite(BF,HIGH);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+          break;
+    case'F'://go forward
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+          break;
+          case'R':// go right
+    digitalWrite(AF,HIGH);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,HIGH);
+          break;
+          case'L':// go left
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,HIGH);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,LOW);
+          break;
+         default:
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);      
+         
+         
+    
+   
+   }
+   
+  }
+    }
+  if (data=='f')
+ { while(1)
+ {
+  if(bluetooth.available()>0)
+ {data=bluetooth.read(); }
+ if (data == 'q')
+ {        digitalWrite(AF,LOW);
+          digitalWrite(BF,LOW);
+          digitalWrite(AB,LOW);
+          digitalWrite(BB,LOW);
+  
+  resetFunc();}
+
+  
+int sensor1=digitalRead(15);//sensor1
+int sensor2=digitalRead(16);//sensor2
+int sensor3=digitalRead(17);//sensor3
+ // black equals low & white equals high
+if((sensor1==HIGH)&&(sensor2==LOW)&&(sensor3==HIGH)) //When (M) s2 on black line GO F
+{
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,1.1 * sp);
+    analogWrite(11,sp);
+}else if((sensor1==LOW)&&(sensor2==LOW)&&(sensor3==HIGH)) //When  (L,M) S2 S1 on black line GO LEFT
+    { digitalWrite(AF,LOW);
+    digitalWrite(BF,HIGH);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,LOW);
+    analogWrite(10,sp);
+    analogWrite(11,sp);
+    }else if((sensor1==HIGH)&&(sensor2==LOW)&&(sensor3==LOW)) // (M,R) S2 S3 ON BLACK GO RIGHT
+    {  
+      digitalWrite(AF,HIGH);
+      digitalWrite(BF,LOW);
+      digitalWrite(AB,LOW);
+      digitalWrite(BB,HIGH);
+      analogWrite(10,sp);
+    analogWrite(11,sp);
+       }else if((sensor1==HIGH)&&(sensor2==HIGH)&&(sensor3==LOW)) // (R) S3 ON BLACK GO RIGHT
+       {  
+        digitalWrite(AF,HIGH);
+        digitalWrite(BF,LOW);
+        digitalWrite(AB,LOW);
+        digitalWrite(BB,HIGH);
+        analogWrite(10,sp);
+    analogWrite(11,sp);
+        } else if((sensor1==LOW)&&(sensor2==HIGH)&&(sensor3==HIGH)) //(L) S1 ON BLACK GO LEFT
+        {
+          digitalWrite(AF,LOW);
+          digitalWrite(BF,HIGH);
+          digitalWrite(AB,HIGH);
+          digitalWrite(BB,LOW);
+          analogWrite(10,sp);
+           analogWrite(11,sp);
+          }else if((sensor1==HIGH)&&(sensor2==HIGH)&&(sensor3==HIGH)) //(L,M,R) S1 S2 S3 ON white GO F
+        {
+          digitalWrite(AF,LOW);
+          digitalWrite(BF,LOW);
+          digitalWrite(AB,HIGH);
+          digitalWrite(BB,HIGH);
+          analogWrite(10,1.1 * sp);
+          analogWrite(11,sp);
+          }else if((sensor1==LOW)&&(sensor2==LOW)&&(sensor3==LOW)) //(L,M,R) S1 S2 S3 ON black GO F
+        {
+          digitalWrite(AF,LOW);
+          digitalWrite(BF,LOW);
+          digitalWrite(AB,HIGH);
+          digitalWrite(BB,HIGH);
+          analogWrite(10,1.1 * sp);
+          analogWrite(11,sp);
+          }    
+          else 
+          {
+          digitalWrite(AF,LOW);
+          digitalWrite(BF,LOW);
+          digitalWrite(AB,HIGH);
+          digitalWrite(BB,HIGH);
+          analogWrite(10,.8 * sp);
+          analogWrite(11,.7*sp);
+            }
+ }
+ }
+if(data=='d')
+{ while(1)
+  {
+  analogWrite(white,500);
+   digitalWrite(Red,LOW);
+   while(bluetooth.available()>0)
+  {      data=bluetooth.read();
+
+     if (data=='q')
+      {
+   analogWrite(white,0);
+   digitalWrite(Red,LOW);
+        resetFunc();
+      
+      }
+    else if(data=='\r')
+    continue;
+    else if(data=='\n')
+    { 
+      break;
+      }
+
+else{str +=data;
+  }
+  }
+
+
+  
+     dest=str.toFloat();
+  
+     while(dist<dest)
+  
+     {
+    analogWrite(10,200);
+    analogWrite(11,170);
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    
+     if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+   }
+     digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    str = "";
+    counter=0;
+    dist=0;
+   
+  
+
+  }
+}
+else if(data=='a')
+{
+ while(1)
+{
+  analogWrite(white,0);
+   digitalWrite(Red,HIGH);
+  while(bluetooth.available()>0)
+  {     
+    data=bluetooth.read();
+    if (data=='q')
+     { analogWrite(white,0);
+   digitalWrite(Red,LOW); 
+        resetFunc();}
+    
+     else if(data=='\r')
+    continue;
+    else if(data=='\n')
+    { 
+      break;
+      }
+else{str +=data;
+
+  }
+  }
+  
+
+
+  
+     dest=str.toFloat();
+     curve=dest*(3.14/180)*6.75/2;
+  
+     while(dist<curve)
+  
+     {
+
+    analogWrite(10,200);
+    analogWrite(11,200);
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,HIGH);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,LOW);
+
+    
+     if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+   }
+     digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    str = "";
+    counter=0;
+    dist=0;
+    
+}
+  }
+else if (data=='m')
+ 
+ {  
+  analogWrite(white,500);
+   digitalWrite(Red,HIGH);
+   // ---------------------------------------------------------------------------- Inf
+   analogWrite(white,500);
+   digitalWrite(Red,HIGH);
+    while(dist<300)        //go half infinity 1
+      {
+        
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,200);
+    analogWrite(11,110);
+        if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+      }
+  digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+   
+  
+  
+  while(dist<240)        //go half infinity 2
+      {
+        
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,145);
+    analogWrite(11,200);
+        if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+      }
+  digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+   delay(10000);
+   // ---------------------------------------------------------------------------- Sqr 
+    while(dist<smin)        //go forward 1
+      {
+        
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,sb);
+    analogWrite(11,s);
+        if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+      }
+  digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+    delay(500);
+    while(dist<(pitch*(3.14/180.0)*6.75)) //TURN 90o to right 2
+    {
+    digitalWrite(AF,HIGH);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,turn);
+    analogWrite(11,turn);
+      if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+   }
+   digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+        delay(500);
+    while(dist<smax)        //go forward 3
+      {
+        
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,sb);
+    analogWrite(11,s);
+        if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+      }
+  digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+        delay(500);
+    while(dist<(pitch*(3.14/180.0)*6.75)) //TURN 90o to right 4
+    {
+      digitalWrite(AF,HIGH);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,turn);
+  analogWrite(11,turn);
+      if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+   }
+   digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+        delay(500);
+    while(dist<smin)        //go forward 5
+      {
+        
+         digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,sb);
+  analogWrite(11,s);
+        if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+      }
+  digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+        delay(500);
+    while(dist<(pitch*(3.14/180.0)*6.75)) //TURN 90o to right 6
+    {
+      digitalWrite(AF,HIGH);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,turn);
+  analogWrite(11,turn);
+      if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+   }
+   digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+        delay(500);
+    while(dist<smax)        //go forward 7
+      {
+        
+         digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,sb);
+  analogWrite(11,s);
+        if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+      }
+  digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+        delay(500);
+    while(dist<(pitch*(3.14/180.0)*6.75)) //TURN 90o to right 8
+    {
+      digitalWrite(AF,HIGH);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,turn);
+  analogWrite(11,turn);
+      if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+   }
+   digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+   delay(10000);  
+   // ---------------------------------------------------------------------------- Circle
+    while(dist<315)        //go forward 1
+      {
+        
+    digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,HIGH);
+    digitalWrite(BB,HIGH);
+    analogWrite(10,200);
+    analogWrite(11,110);
+        if(analogRead(A0)  > sens)
+ { lastState = HIGH;
+ }
+ else {lastState = LOW; }
+ if(state != lastState)
+ { counter++;
+  state = lastState;}
+  dist = counter/2 ;
+  Serial.println(dist);  
+      }
+  digitalWrite(AF,LOW);
+    digitalWrite(BF,LOW);
+    digitalWrite(AB,LOW);
+    digitalWrite(BB,LOW);
+    
+    counter=0;
+    dist=0;
+        delay(500);
+   analogWrite(white,0);
+   digitalWrite(Red,LOW);   
+ } 
+ }
+}
+ 
+  
